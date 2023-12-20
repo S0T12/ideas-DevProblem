@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { CreateIdeaDto } from './dto/create-idea.dto';
 import { UpdateIdeaDto } from './dto/update-idea.dto';
+import { ObjectId } from 'mongodb';
+import { InjectModel } from '@nestjs/mongoose';
+import { Idea } from './schemas/idea.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class IdeasService {
-  create(createIdeaDto: CreateIdeaDto) {
-    return 'This action adds a new idea';
+  constructor(@InjectModel(Idea.name) private ideaModel: Model<Idea>) {}
+  async create(createIdeaDto: CreateIdeaDto) {
+    try {
+      const idea = new this.ideaModel(createIdeaDto);
+      await idea.save();
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all ideas`;
+  async findAll(): Promise<Idea[]> {
+    return await this.ideaModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} idea`;
+  async findOne(id: ObjectId) {
+    return await this.ideaModel.findById(id).exec();
   }
 
-  update(id: number, updateIdeaDto: UpdateIdeaDto) {
-    return `This action updates a #${id} idea`;
+  async update(id: ObjectId, updateIdeaDto: UpdateIdeaDto): Promise<any> {
+    return await this.ideaModel.updateOne(id, updateIdeaDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} idea`;
+  async remove(id: ObjectId): Promise<any> {
+    return await this.ideaModel.deleteOne(id);
   }
 }

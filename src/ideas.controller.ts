@@ -3,6 +3,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { IdeasService } from './ideas.service';
 import { CreateIdeaDto } from './dto/create-idea.dto';
 import { UpdateIdeaDto } from './dto/update-idea.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller()
 export class IdeasController {
@@ -19,7 +20,7 @@ export class IdeasController {
   }
 
   @MessagePattern('findOneIdea')
-  findOne(@Payload() id: number) {
+  findOne(@Payload() id: ObjectId) {
     return this.ideasService.findOne(id);
   }
 
@@ -29,7 +30,7 @@ export class IdeasController {
   }
 
   @MessagePattern('removeIdea')
-  remove(@Payload() id: number) {
+  remove(@Payload() id: ObjectId) {
     return this.ideasService.remove(id);
   }
 }
