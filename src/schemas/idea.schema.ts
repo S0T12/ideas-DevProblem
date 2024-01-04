@@ -15,10 +15,7 @@ export class Idea {
   creator: string;
 
   @Prop()
-  problem: string;
-
-  @Prop()
-  devs: string[];
+  problemID: string;
 
   @Prop()
   createdAt: Date;
