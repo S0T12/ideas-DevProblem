@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateIdeaDto {
   @IsString()
@@ -11,6 +11,6 @@ export class CreateIdeaDto {
   creator: string;
 
   @IsOptional()
-  @IsNumber()
-  problem: number;
+  @IsString()
+  problemID: string;
 }
