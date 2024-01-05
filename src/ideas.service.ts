@@ -12,7 +12,7 @@ export class IdeasService {
   async create(createIdeaDto: CreateIdeaDto) {
     try {
       const idea = new this.ideaModel(createIdeaDto);
-      await idea.save();
+      return await idea.save();
     } catch (error) {
       throw error;
     }
