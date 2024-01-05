@@ -10,27 +10,29 @@ export class IdeasController {
   constructor(private readonly ideasService: IdeasService) {}
 
   @MessagePattern('createIdea')
-  create(@Payload() createIdeaDto: CreateIdeaDto) {
-    return this.ideasService.create(createIdeaDto);
+  async create(@Payload() createIdeaDto: CreateIdeaDto) {
+    return await this.ideasService.create(createIdeaDto);
   }
 
   @MessagePattern('findAllIdeas')
-  findAll() {
-    return this.ideasService.findAll();
+  async findAll() {
+    return await this.ideasService.findAll();
   }
 
   @MessagePattern('findOneIdea')
-  findOne(@Payload() id: ObjectId) {
-    return this.ideasService.findOne(id);
+  async findOne(@Payload() id: ObjectId) {
+    return await this.ideasService.findOne(id);
   }
 
   @MessagePattern('updateIdea')
-  update(@Payload() updateIdeaDto: UpdateIdeaDto) {
-    return this.ideasService.update(updateIdeaDto.id, updateIdeaDto);
+  async update(
+    @Payload() payload: { id: ObjectId; updateIdeaDto: UpdateIdeaDto },
+  ) {
+    return await this.ideasService.update(payload.id, payload.updateIdeaDto);
   }
 
   @MessagePattern('removeIdea')
-  remove(@Payload() id: ObjectId) {
-    return this.ideasService.remove(id);
+  async remove(@Payload() id: ObjectId) {
+    return await this.ideasService.remove(id);
   }
 }
