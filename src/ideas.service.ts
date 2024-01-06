@@ -30,7 +30,8 @@ export class IdeasService {
     return await this.ideaModel.updateOne(id, updateIdeaDto);
   }
 
-  async remove(id: ObjectId): Promise<any> {
-    return await this.ideaModel.deleteOne(id);
+  async remove(id: ObjectId): Promise<object> {
+    const objectId: ObjectId = new ObjectId(id);
+    return await this.ideaModel.deleteOne(objectId);
   }
 }
