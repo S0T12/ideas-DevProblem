@@ -19,6 +19,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           },
         },
       },
+      {
+        name: 'PROBLEMS_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'problems_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
     MongooseModule.forRoot('mongodb://localhost:27017/ideas-devProblem'),
     MongooseModule.forFeature([{ name: Idea.name, schema: IdeaSchema }]),
