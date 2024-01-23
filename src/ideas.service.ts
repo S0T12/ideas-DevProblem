@@ -12,14 +12,24 @@ import { firstValueFrom } from 'rxjs';
 export class IdeasService {
   constructor(
     @InjectModel(Idea.name) private ideaModel: Model<Idea>,
-    @Inject('USERS_SERVICE') private readonly client: ClientProxy,
+    @Inject('USERS_SERVICE') private readonly userClient: ClientProxy,
+    @Inject('PROBLEMS_SERVICE') private readonly problemClient: ClientProxy,
   ) {}
   async create(createIdeaDto: CreateIdeaDto) {
     try {
       const user = await firstValueFrom(
-        this.client.send<string>('findByUsername', createIdeaDto.creator),
+        this.userClient.send<string>('findByUsername', createIdeaDto.creator),
       );
       if (!user) throw new BadRequestException('User not exists');
+
+      const problem = await firstValueFrom(
+        this.problemClient.send<ObjectId>(
+          'findOneProblem',
+          createIdeaDto.problemID,
+        ),
+      );
+
+      if (!problem) throw new BadRequestException('Problem not exists');
 
       const idea = new this.ideaModel(createIdeaDto);
       return await idea.save();
