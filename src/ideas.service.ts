@@ -4,7 +4,7 @@ import { UpdateIdeaDto } from './dto/update-idea.dto';
 import { ObjectId } from 'mongodb';
 import { InjectModel } from '@nestjs/mongoose';
 import { Idea } from './schemas/idea.schema';
-import { Model } from 'mongoose';
+import { Model, UpdateWriteOpResult } from 'mongoose';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
@@ -15,12 +15,14 @@ export class IdeasService {
     @Inject('USERS_SERVICE') private readonly userClient: ClientProxy,
     @Inject('PROBLEMS_SERVICE') private readonly problemClient: ClientProxy,
   ) {}
-  async create(createIdeaDto: CreateIdeaDto) {
+  async create(
+    createIdeaDto: CreateIdeaDto,
+  ): Promise<Idea | BadRequestException> {
     try {
       const user = await firstValueFrom(
         this.userClient.send<string>('findByUsername', createIdeaDto.creator),
       );
-      if (!user) throw new BadRequestException('User not exists');
+      if (!user) return new BadRequestException('User Not Found!');
 
       const problem = await firstValueFrom(
         this.problemClient.send<ObjectId>(
@@ -29,7 +31,7 @@ export class IdeasService {
         ),
       );
 
-      if (!problem) throw new BadRequestException('Problem not exists');
+      if (!problem) return new BadRequestException('Problem Not Exists');
 
       const idea = new this.ideaModel(createIdeaDto);
       return await idea.save();
@@ -46,8 +48,11 @@ export class IdeasService {
     return await this.ideaModel.findById(id).exec();
   }
 
-  async update(id: ObjectId, updateIdeaDto: UpdateIdeaDto): Promise<any> {
-    return await this.ideaModel.updateOne(id, updateIdeaDto);
+  async update(
+    id: ObjectId,
+    updateIdeaDto: UpdateIdeaDto,
+  ): Promise<UpdateWriteOpResult> {
+    return await this.ideaModel.updateOne({ _id: id }, updateIdeaDto);
   }
 
   async remove(id: ObjectId): Promise<object> {
