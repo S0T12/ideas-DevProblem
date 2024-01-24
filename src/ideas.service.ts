@@ -12,20 +12,20 @@ import { firstValueFrom } from 'rxjs';
 export class IdeasService {
   constructor(
     @InjectModel(Idea.name) private ideaModel: Model<Idea>,
-    @Inject('USERS_SERVICE') private readonly userClient: ClientProxy,
-    @Inject('PROBLEMS_SERVICE') private readonly problemClient: ClientProxy,
+    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
+    @Inject('PROBLEMS_SERVICE') private readonly problemsClient: ClientProxy,
   ) {}
   async create(
     createIdeaDto: CreateIdeaDto,
   ): Promise<Idea | BadRequestException> {
     try {
       const user = await firstValueFrom(
-        this.userClient.send<string>('findByUsername', createIdeaDto.creator),
+        this.usersClient.send<string>('findByUsername', createIdeaDto.creator),
       );
       if (!user) return new BadRequestException('User Not Found!');
 
       const problem = await firstValueFrom(
-        this.problemClient.send<ObjectId>(
+        this.problemsClient.send<ObjectId>(
           'findOneProblem',
           createIdeaDto.problemID,
         ),
